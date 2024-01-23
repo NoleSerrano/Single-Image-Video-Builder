@@ -39,7 +39,7 @@ def find_files_by_extension(directory, extensions):
             return file
     return None
 
-def create_video(image_path, audio_path, video_path, frame_rate=24, video_width=1920, video_height=1080):
+def create_video(image_path, audio_path, video_path, frame_rate=24, video_width=1920, video_height=1080, use_gpu=True):
     """
     Creates a video from a single image and an audio file.
 
@@ -58,6 +58,8 @@ def create_video(image_path, audio_path, video_path, frame_rate=24, video_width=
         scale_cmd = f"scale='min({video_width}/iw,{video_height}/ih)*iw':'min({video_width}/iw,{video_height}/ih)*ih'"
         pad_cmd = f"pad={video_width}:{video_height}:(ow-iw)/2:(oh-ih)/2"
 
+        video_codec = 'h264_nvenc' if use_gpu else 'libx264'
+
         # Constructing the ffmpeg command
         command = [
             'ffmpeg',
@@ -65,7 +67,7 @@ def create_video(image_path, audio_path, video_path, frame_rate=24, video_width=
             '-framerate', str(frame_rate),
             '-i', image_path,
             '-i', audio_path,
-            '-c:v', 'libx264',
+            '-c:v', 'h264_nvenc' if use_gpu else 'libx264',
             '-t', str(video_duration),
             '-vf', f"{scale_cmd},{pad_cmd}",
             '-c:a', 'aac',
@@ -83,8 +85,10 @@ def create_video(image_path, audio_path, video_path, frame_rate=24, video_width=
         print(f"Error in video creation: {e}")
 
 if __name__ == "__main__":
+    
+
     if len(sys.argv) == 5:
-        image_path, audio_path, video_path, frame_rate = sys.argv[1:5]
+        image_path, audio_path, video_path, frame_rate, use_gpu = sys.argv[1:6]
     else:
         print("No arguments provided. Searching for image and audio files in the current directory...")
         image_path = find_files_by_extension('.', ['.jpg', '.jpeg', '.png'])
@@ -94,6 +98,9 @@ if __name__ == "__main__":
             print("Could not find an image and/or audio file in the current directory.")
             sys.exit(1)
 
+        # Default values
         video_path = os.path.splitext(audio_path)[0] + ".mp4"
+        frame_rate = 24
+        use_gpu = False  # Default GPU usage
 
-    create_video(image_path, audio_path, video_path, frame_rate=int(frame_rate))
+    create_video(image_path, audio_path, video_path, frame_rate=int(frame_rate), use_gpu=use_gpu)
