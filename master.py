@@ -58,8 +58,6 @@ def create_video(image_path, audio_path, video_path, frame_rate=24, video_width=
         scale_cmd = f"scale='min({video_width}/iw,{video_height}/ih)*iw':'min({video_width}/iw,{video_height}/ih)*ih'"
         pad_cmd = f"pad={video_width}:{video_height}:(ow-iw)/2:(oh-ih)/2"
 
-        video_codec = 'h264_nvenc' if use_gpu else 'libx264'
-
         # Constructing the ffmpeg command
         command = [
             'ffmpeg',
