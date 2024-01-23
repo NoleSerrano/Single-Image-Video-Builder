@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 
 def get_audio_duration(audio_path):
     """
@@ -25,7 +26,20 @@ def calculate_video_duration(audio_duration, frame_rate):
     # Adjust for frame rate to get the video duration
     return total_frames / frame_rate
 
-def create_video(image_path, audio_path, video_path, frame_rate=30, video_width=1920, video_height=1080):
+def find_files_by_extension(directory, extensions):
+    """
+    Find the first file in the given directory that matches one of the extensions.
+
+    :param directory: Directory to search in.
+    :param extensions: List of file extensions to look for.
+    :return: Path to the found file or None if no file is found.
+    """
+    for file in os.listdir(directory):
+        if any(file.lower().endswith(ext) for ext in extensions):
+            return file
+    return None
+
+def create_video(image_path, audio_path, video_path, frame_rate=24, video_width=1920, video_height=1080):
     """
     Creates a video from a single image and an audio file.
 
@@ -69,9 +83,17 @@ def create_video(image_path, audio_path, video_path, frame_rate=30, video_width=
         print(f"Error in video creation: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
-        print("Usage: python master.py <image_path> <audio_path> <video_path> <frame_rate>")
-        sys.exit(1)
+    if len(sys.argv) == 5:
+        image_path, audio_path, video_path, frame_rate = sys.argv[1:5]
+    else:
+        print("No arguments provided. Searching for image and audio files in the current directory...")
+        image_path = find_files_by_extension('.', ['.jpg', '.jpeg', '.png'])
+        audio_path = find_files_by_extension('.', ['.mp3', '.wav', '.aac'])
 
-    image_path, audio_path, video_path, frame_rate = sys.argv[1:5]
+        if not image_path or not audio_path:
+            print("Could not find an image and/or audio file in the current directory.")
+            sys.exit(1)
+
+        video_path = os.path.splitext(audio_path)[0] + ".mp4"
+
     create_video(image_path, audio_path, video_path, frame_rate=int(frame_rate))
