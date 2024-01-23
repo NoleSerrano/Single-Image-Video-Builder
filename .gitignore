@@ -2,11 +2,15 @@
 *.log
 *.part
 
+# Audio
+*.wav
+*.mp3
+
+# Image
+*.png
+*.jpg
+
 # Video Files
 *.mp4
 *.webm
 *.ts
-
-# Networking
-Network/browsermob-proxy-2.1.4/
-Network/NetworkFiles
