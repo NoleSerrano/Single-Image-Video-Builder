@@ -70,7 +70,7 @@ def create_video(image_path, audio_path, video_path, frame_rate=30, video_width=
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
-        print("Usage: python script.py <image_path> <audio_path> <video_path> <frame_rate>")
+        print("Usage: python master.py <image_path> <audio_path> <video_path> <frame_rate>")
         sys.exit(1)
 
     image_path, audio_path, video_path, frame_rate = sys.argv[1:5]

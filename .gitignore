@@ -1,0 +1,12 @@
+*.exe
+*.log
+*.part
+
+# Video Files
+*.mp4
+*.webm
+*.ts
+
+# Networking
+Network/browsermob-proxy-2.1.4/
+Network/NetworkFiles
